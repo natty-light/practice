@@ -6,44 +6,11 @@ import (
 )
 
 func main() {
-	var dividend, divisor = 2147483647, 1
+	var dividend, divisor = 10, 3
 	var result = divide(dividend, divisor)
 	fmt.Printf("Expected: 2147483647 \n")
 	fmt.Printf("%d / %d = %d \n\n", dividend, divisor, result)
-
-	dividend, divisor = -2147483648, -1
-	result = divide(dividend, divisor)
-	fmt.Printf("Expected: 2147483647 \n")
-	fmt.Printf("%d / %d = %d \n\n", dividend, divisor, result)
-
-	dividend, divisor = 10, 3
-	result = divide(dividend, divisor)
-	fmt.Printf("Expected: 2147483647 \n")
-	fmt.Printf("%d / %d = %d \n\n", dividend, divisor, result)
 }
-
-// recursion failed me
-// func divide(dividend int, divisor int) int {
-// 	if dividend == math.MinInt32 && divisor == -1 {
-// 		return math.MaxInt32
-// 	}
-// 	if divisor == 1 || divisor == -1 {
-// 		return dividend * divisor
-// 	}
-// 	if (dividend < 0) != (divisor < 0) {
-// 		if dividend+divisor < 0 {
-// 			return 0
-// 		} else {
-// 			return -1 + divide(dividend+divisor, divisor)
-// 		}
-// 	} else {
-// 		if dividend-divisor < 0 {
-// 			return 0
-// 		} else {
-// 			return 1 + divide(dividend-divisor, divisor)
-// 		}
-// 	}
-// }
 
 func divide(dividend int, divisor int) int {
 	var sign, result, accumulator int
