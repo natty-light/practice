@@ -6,37 +6,90 @@ import (
 )
 
 func main() {
-	var dividend, divisor = 1, -1
-	fmt.Println(divide(dividend, divisor))
-	dividend, divisor = -1, 1
-	fmt.Println(divide(dividend, divisor))
-	dividend = -2147483648
-	divisor = -1
-	fmt.Println(divide(dividend, divisor))
-	dividend = 2147483647
-	divisor = 1
-	fmt.Println(divide(dividend, divisor))
+	var dividend, divisor = 2147483647, 1
+	var result = divide(dividend, divisor)
+	fmt.Printf("Expected: 2147483647 \n")
+	fmt.Printf("%d / %d = %d \n\n", dividend, divisor, result)
+
+	dividend, divisor = -2147483648, -1
+	result = divide(dividend, divisor)
+	fmt.Printf("Expected: 2147483647 \n")
+	fmt.Printf("%d / %d = %d \n\n", dividend, divisor, result)
+
+	dividend, divisor = 10, 3
+	result = divide(dividend, divisor)
+	fmt.Printf("Expected: 2147483647 \n")
+	fmt.Printf("%d / %d = %d \n\n", dividend, divisor, result)
 }
 
 // recursion failed me
+// func divide(dividend int, divisor int) int {
+// 	if dividend == math.MinInt32 && divisor == -1 {
+// 		return math.MaxInt32
+// 	}
+// 	if divisor == 1 || divisor == -1 {
+// 		return dividend * divisor
+// 	}
+// 	if (dividend < 0) != (divisor < 0) {
+// 		if dividend+divisor < 0 {
+// 			return 0
+// 		} else {
+// 			return -1 + divide(dividend+divisor, divisor)
+// 		}
+// 	} else {
+// 		if dividend-divisor < 0 {
+// 			return 0
+// 		} else {
+// 			return 1 + divide(dividend-divisor, divisor)
+// 		}
+// 	}
+// }
+
 func divide(dividend int, divisor int) int {
+	var sign, result, accumulator int
+
 	if dividend == math.MinInt32 && divisor == -1 {
 		return math.MaxInt32
 	}
-	if divisor == 1 || divisor == -1 {
-		return dividend * divisor
-	}
-	if (dividend < 0) != (divisor < 0) {
-		if dividend+divisor < 0 {
-			return 0
-		} else {
-			return -1 + divide(dividend+divisor, divisor)
-		}
+
+	// Compute and store the sign
+	if (dividend > 0 && divisor > 0) || (dividend < 0 && divisor < 0) {
+		sign = 1
 	} else {
-		if dividend-divisor < 0 {
-			return 0
-		} else {
-			return 1 + divide(dividend-divisor, divisor)
-		}
+		sign = -1
 	}
+
+	// Get the easy one out of the way first
+	if dividend == divisor || -dividend == divisor {
+		return 1 * sign
+	}
+	if dividend == 0 {
+		return 0
+	}
+
+	// Peel off sign
+	dividend, divisor = abs(dividend), abs(divisor)
+	result = 0
+	// While the dividend is bigger than the divisor
+	for dividend-divisor >= 0 {
+		// start the accumulator
+		accumulator = 0
+		// Bit shift by 1 + accumulator. Equivalent to multiplying by 2
+		for dividend-(divisor<<1<<accumulator) >= 0 {
+			// once accumulator * 2 > divisor, break out
+			accumulator++
+		}
+		//keep track of the result by adding 2*accumulator
+		result += 1 << accumulator
+		// Remove lower the divisor by the divisor 2*accumulator, reset the accumulator so as to only divide by 1*divisor on line 78
+		dividend -= divisor << accumulator
+	}
+	return result * sign
+}
+
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
 }
